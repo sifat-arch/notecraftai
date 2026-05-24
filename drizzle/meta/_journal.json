@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1779660789562,
+      "tag": "0000_sharp_krista_starr",
+      "breakpoints": true
+    }
+  ]
+}
