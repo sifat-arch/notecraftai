@@ -20,11 +20,13 @@ import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 export const notes = pgTable("notes", {
   id: serial("id").primaryKey(),
 
-  title: text("title").notNull(),
+  title: text("title").notNull().default("Untitled"),
 
-  content: text("content").notNull(),
+  content: text("content").notNull().default(""),
 
   userId: text("user_id").notNull(),
 
   createdAt: timestamp("created_at").defaultNow(),
+
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
