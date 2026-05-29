@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { title, userId } = body;
+    const { title, userId, content } = body;
 
     if (!userId) {
       return NextResponse.json(
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       .insert(notes)
       .values({
         title: title || "Untitled",
-        content: "",
+        content: content || "",
         userId,
       })
       .returning();
@@ -67,4 +67,3 @@ export async function GET(req: Request) {
     );
   }
 }
-
