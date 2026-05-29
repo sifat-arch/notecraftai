@@ -15,6 +15,7 @@ const Sidebar = () => {
       <nav style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
         <Link href="/dashboard/notes">All Notes</Link>
         <Link href="/dashboard/create">➕ Create Note</Link>
+        <Link href="/dashboard/modal">➕ Modal</Link>
       </nav>
     </aside>
   );

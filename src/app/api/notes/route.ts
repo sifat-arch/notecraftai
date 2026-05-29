@@ -3,6 +3,7 @@ import { notes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+// create notes
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -61,6 +62,38 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error("GET_ALL /notes error:", error);
 
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
+
+// update notes
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, title, content } = body;
+    if (!id) {
+      return NextResponse.json(
+        { error: "Note ID is requered" },
+        { status: 400 },
+      );
+    }
+    //metching id and update title and content
+    const updatedNotes = await db
+      .update(notes)
+      .set({
+        title: title || "Untilted",
+        content: content || "",
+        updatedAt: new Date(),
+      })
+      .where(eq(notes.id, Number(id)))
+      .returning();
+
+    return NextResponse.json(updatedNotes[0], { status: 200 });
+  } catch (error) {
+    console.error("PUT /notes error:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 },
