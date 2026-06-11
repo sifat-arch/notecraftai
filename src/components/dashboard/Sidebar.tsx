@@ -34,22 +34,10 @@ const mainNav = [
     isActive: (p: string) => p === "/dashboard",
   },
   {
-    label: "Shared",
+    label: "ASK",
     href: "/dashboard/ask",
     icon: Users,
     isActive: (p: string) => p.startsWith("/dashboard/ask"),
-  },
-  {
-    label: "Templates",
-    href: "/dashboard/create",
-    icon: FileText,
-    isActive: (p: string) => p.startsWith("/dashboard/create"),
-  },
-  {
-    label: "Archive",
-    href: "/dashboard/notes",
-    icon: Archive,
-    isActive: () => false,
   },
   {
     label: "Quiz",

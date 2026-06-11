@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { notes } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 // create notes
@@ -45,6 +45,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
+    const searchItems = searchParams.get("search");
     const userId = searchParams.get("userId");
     if (!userId) {
       return NextResponse.json(
@@ -52,11 +53,23 @@ export async function GET(req: Request) {
         { status: 400 },
       );
     }
-
-    const allNotes = await db
-      .select()
-      .from(notes)
-      .where(eq(notes.userId, userId!));
+    let allNotes;
+    if (searchItems) {
+      allNotes = await db
+        .select()
+        .from(notes)
+        .where(
+          and(
+            eq(notes.userId, userId),
+            or(
+              ilike(notes.title, `%${searchItems}%`),
+              ilike(notes.content, `%${searchItems}%`),
+            ),
+          ),
+        );
+    } else {
+      allNotes = await db.select().from(notes).where(eq(notes.userId, userId!));
+    }
 
     return NextResponse.json(allNotes);
   } catch (error) {
@@ -141,3 +154,4 @@ export async function DELETE(req: Request) {
     );
   }
 }
+

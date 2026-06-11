@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { Trash2 } from "lucide-react"; // 🚀 ডিলিট আইকনের জন্য এটি ইম্পোর্ট করা হয়েছে
+import { Search, Trash2 } from "lucide-react"; // 🚀 ডিলিট আইকনের জন্য এটি ইম্পোর্ট করা হয়েছে
 import NoteEditor from "@/components/ui/NoteEditor";
 import FlashcardComponent from "@/components/FlashCardComponent";
 
@@ -42,13 +42,16 @@ const AllNotesPage = () => {
   const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
+  // searching
+  const [searchTerm, setSearchTerm] = useState("");
+
   // ডাটাবেজ থেকে সব নোট আনা
-  const fetchAllNotes = async () => {
+  const fetchAllNotes = async (search = "") => {
     if (!user?.id) return;
 
     try {
       const response = await fetch(
-        `${window.location.origin}/api/notes?userId=${user.id}`,
+        `${window.location.origin}/api/notes?userId=${user.id}${search ? `&search=${encodeURIComponent(search)}` : ""}`,
       );
       if (response.ok) {
         const data = await response.json();
@@ -66,6 +69,10 @@ const AllNotesPage = () => {
       fetchAllNotes();
     }
   }, [isLoaded, user]);
+
+  useEffect(() => {
+    fetchAllNotes(searchTerm);
+  }, [searchTerm]);
 
   // কার্ডে ক্লিক করলে মোডাল ওপেন হবে
   const handleNoteClick = (note: Note) => {
@@ -176,12 +183,12 @@ const AllNotesPage = () => {
   };
 
   const handleCloseDialog = () => {
-    setIsOpen(false); // মোডাল বন্ধ করবে
-    setSelectedNote(null); // সিলেক্টেড নোট ক্লিয়ার করবে
-    setEditTitle(""); // টাইটেল খালি করবে
-    setEditContent(""); // কনটেন্ট খালি করবে
-    setAiSummary(null); // AI Summary ক্লিয়ার করবে
-    setFlashcards([]); // Flashcards ক্লিয়ার করবে
+    setIsOpen(false);
+    setSelectedNote(null);
+    setEditTitle("");
+    setEditContent("");
+    setAiSummary(null);
+    setFlashcards([]);
   };
 
   return (
@@ -193,6 +200,20 @@ const AllNotesPage = () => {
         <p className="text-sm text-muted-foreground">
           Notes: {notesList.length}
         </p>
+        <div className="flex justify-center w-full">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-2 flex items-center">
+              <Search className="h-5 w-5 text-slate-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border border-slate-200 w-md py-2 pl-10 rounded-md  text-slate-400"
+            />
+          </div>
+        </div>
       </div>
 
       {notesList.length === 0 ? (
